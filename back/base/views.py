@@ -18,8 +18,23 @@ from .models import Task,Contact, Money
 from .forms import PositionForm
 from .filter import AppFilter
 
+from .serializers import TaskSerializer,MoneySerializer, ContactSerializer
+from rest_framework import generics
+
+class TaskListCreate(generics.ListCreateAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+class MoneyListCreate(generics.ListCreateAPIView):
+    queryset = Money.objects.all()
+    serializer_class = MoneySerializer
+
+class ContactListCreate(generics.ListCreateAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
 class CustomLoginView(LoginView):
-    template_name = 'base/login.html'
+    template_name = 'front/index.html'
     fields = '__all__'
     redirect_authenticated_user = True
 
@@ -28,7 +43,7 @@ class CustomLoginView(LoginView):
 
 
 class RegisterPage(FormView):
-    template_name = 'base/register.html'
+    template_name = 'front/index.html'
     form_class = UserCreationForm
     redirect_authenticated_user = True
     success_url = reverse_lazy('tasks')
@@ -68,7 +83,7 @@ class TaskList(LoginRequiredMixin, ListView):
 class TaskDetail(LoginRequiredMixin, DetailView):
     model = Task
     context_object_name = 'task'
-    template_name = 'base/task.html'
+    template_name = 'front/index.html'
 
 
 class TaskCreate(LoginRequiredMixin, CreateView):
@@ -120,7 +135,7 @@ class ContactList(LoginRequiredMixin,ListView):
         else:
             contacts = Contact.objects.all()
             search_input = ''
-        return render(request, 'index.html', {'contacts': contacts, 'search_input': search_input})
+        return render(request, 'front/index.html', {'contacts': contacts, 'search_input': search_input})
 
 class ContactCreate(LoginRequiredMixin,CreateView):
     model = Contact
@@ -138,7 +153,7 @@ class ContactCreate(LoginRequiredMixin,CreateView):
             new_contact.save()
             return redirect('/')
 
-        return render(request, 'new.html')
+        return render(request, 'front/index.html')
 
 class ContactsUpdate(LoginRequiredMixin, UpdateView):
     model = Contact
@@ -157,7 +172,7 @@ class ContactsUpdate(LoginRequiredMixin, UpdateView):
             contact.save()
 
             return redirect('/profile/'+str(contact.id))
-        return render(request, 'new.html', {'contact': contact})
+        return render(request, 'front/index.html', {'contact': contact})
 
 class ContactDelete(LoginRequiredMixin, DeleteView):
     model = Contact
@@ -171,16 +186,16 @@ class ContactDelete(LoginRequiredMixin, DeleteView):
             contact.delete()
             return redirect('/')
 
-        return render(request, 'new.html', {'contact': contact})
+        return render(request, 'front/index.html', {'contact': contact})
 
 class ContactDetail(LoginRequiredMixin, DetailView):
     model = Contact
     context_object_name = 'contact'
-    template_name = 'base/index.html'
+    template_name = 'front/index.html'
 
     def contactProfile(request, pk):
         contact = Contact.objects.get(id=pk)
-        return render(request, 'new.html', {'contact':contact})
+        return render(request, 'front/index.html', {'contact':contact})
 
 
 class MoneyList(LoginRequiredMixin, ListView):
@@ -227,7 +242,7 @@ class MoneyDelete(LoginRequiredMixin, DeleteView):
 class MoneyDetail(LoginRequiredMixin, DetailView):
     model = Money
     context_object_name = 'money'
-    template_name = 'base/money.html'
+    template_name = 'front/index.html'
 
 class MoneyReorder(View):
     def post(self, request):
