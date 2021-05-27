@@ -174,19 +174,14 @@ class ContactsUpdate(LoginRequiredMixin, UpdateView):
             return redirect('/profile/'+str(contact.id))
         return render(request, 'front/index.html', {'contact': contact})
 
-class ContactDelete(LoginRequiredMixin, DeleteView):
-    model = Contact
-    context_object_name = 'contact'
-    success_url = reverse_lazy('contacts')
+def ContactDelete(request, pk):
+    contact = Contact.objects.get(id=pk)
 
-    def deleteContact(request, pk):
-        contact = Contact.objects.get(id=pk)
+    if request.method == 'POST':
+        contact.delete()
+        return redirect('/')
 
-        if request.method == 'POST':
-            contact.delete()
-            return redirect('/')
-
-        return render(request, 'front/index.html', {'contact': contact})
+    return render(request, 'front/index.html', {'contact': contact})
 
 class ContactDetail(LoginRequiredMixin, DetailView):
     model = Contact
@@ -234,10 +229,14 @@ class MoneyUpdate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('moneys')
 
 
-class MoneyDelete(LoginRequiredMixin, DeleteView):
-    model = Money
-    context_object_name = 'money'
-    success_url = reverse_lazy('moneys')
+def MoneyDelete(request, pk):
+    money = Money.objects.get(id=pk)
+
+    if request.method == 'POST':
+        money.delete()
+        return redirect('/')
+
+    return render(request, 'front/index.html', {'money': money})
 
 class MoneyDetail(LoginRequiredMixin, DetailView):
     model = Money
